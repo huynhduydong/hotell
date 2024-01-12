@@ -25,53 +25,49 @@
             <th class="column-header">Tỉ lệ</th>
         </tr>
         </thead>
+        <tbody>
+         {% for s in baocaomatdo %}
+      <tr>
+        <td>{{ s[0] }}</td>
+        <td>{{ s[1] }}</td>
+        <td>{{ s[2] }} VNĐ</td>
+      </tr>
+      {% endfor %}
+        </tbody>
+
     </table>
 
     <h2>Biểu đồ:</h2>
-    <div class="col-md-7 col-xs-12">
-        <canvas id="BaoCaoThang"></canvas>
-    </div>
+
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="col-md-7 col-xs-12">
+    <canvas id="BaoCaoThang"></canvas>
+</div>
 <script>
-    let labels=[], info = [];
-
-    {% for c in bcao %}
-        labels.push('{{ c[0]}}')
-        {%for x in tongdoanhthu%}
-        info.push({{c[1]/x[1]}})
-        {%endfor%}
-
-    {%endfor%}
-
-    let colors=[]
-    for (let i=0; i< labels.length; i++){
-        let r=parseInt(Math.random()* 255)
-        let g=parseInt(Math.random()* 255)
-        let b=parseInt(Math.random()* 255)
-        colors.push(`rgb(${r}, ${g}, ${b})`)
-        }
-
-
-      const data = {
-      labels:labels,
+    window.onload= funcion(){
+    const ctx = document.getElementById('BaoCaoThang').getContext(2d)
+ const myChart= new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
       datasets: [{
-        label: 'Báo Cáo Tháng',
-        data: info,
-        backgroundColor: colors,
-        hoverOffset: 4
+        label: '# of Votes',
+        data: [12, 19, 3, 5, 2, 3],
+        borderWidth: 1
       }]
-    };
-
-    const config = {
-      type: 'doughnut',
-      data: data,
-    };
-
-    window.onload=function(){
-      let ctx= document.getElementById('BaoCaoThang').getContext('2d')
-      new Chart(ctx, config);
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
     }
+  });
 
+}
 </script>
+
+
 {% endblock %}

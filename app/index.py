@@ -19,48 +19,48 @@ def add_images_root(image):
     return new_image
 
 
-# @app.route("/")
-# def home():
-#     # blogs = get_all_blogs()
-#     # num = count_blogs()
-#     # page_size = app.config["PAGE_SIZE"]
-#     kw = request.args.get("kw")
-#     # images = dao.get_all_loai_phong()
-#     suites = {
-#         "Junior":
-#             {
-#                 "name": "Junior Suite",
-#                 "wifi": False,
-#                 "bedroom": 1,
-#                 "description": "des 1",
-#                 "image": "room-1.jpg"
-#             },
-#         "Executive":
-#             {
-#                 "name": "Executive Suite",
-#                 "wifi": True,
-#                 "bedroom": 2,
-#                 "description": "des 2",
-#                 "image": "room-2.jpg"
-#
-#             },
-#         "Deluxe":
-#             {
-#                 "name": "Deluxe Suite",
-#                 "wifi": True,
-#                 "bedroom": 3,
-#                 "description": "des 3",
-#                 "image": "room-3.jpg"
-#             }
-#     }
-#
-#     for k, v in suites.items():
-#         v["image"] = add_images_root(v["image"])
-#         # print(v["image"])
-#
-#     return render_template("index.html", suites=suites
-#                            # , pages=math.ceil(num/page_size)
-#                            , current_user=current_user)
+@app.route("/")
+def home_2():
+    # blogs = get_all_blogs()
+    # num = count_blogs()
+    # page_size = app.config["PAGE_SIZE"]
+    kw = request.args.get("kw")
+    # images = dao.get_all_loai_phong()
+    suites = {
+        "Junior":
+            {
+                "name": "Junior Suite",
+                "wifi": False,
+                "bedroom": 1,
+                "description": "des 1",
+                "image": "room-1.jpg"
+            },
+        "Executive":
+            {
+                "name": "Executive Suite",
+                "wifi": True,
+                "bedroom": 2,
+                "description": "des 2",
+                "image": "room-2.jpg"
+
+            },
+        "Deluxe":
+            {
+                "name": "Deluxe Suite",
+                "wifi": True,
+                "bedroom": 3,
+                "description": "des 3",
+                "image": "room-3.jpg"
+            }
+    }
+
+    for k, v in suites.items():
+        v["image"] = add_images_root(v["image"])
+        # print(v["image"])
+
+    return render_template("index.html", suites=suites
+                           # , pages=math.ceil(num/page_size)
+                           , current_user=current_user)
 
 
 @login.user_loader

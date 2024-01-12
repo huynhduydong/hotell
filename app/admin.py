@@ -10,7 +10,7 @@ from models import Phong, KhachHang, UserRole#, PhieuDatPhong, PhieuThuePhong
 
 class StaffModelView(ModelView):
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.user_role == UserRole.NHAN_VIEN
+        return current_user.is_authenticated and current_user.user_role == UserRole.le_tan
 
 
 class PhieuDatPhongView(StaffModelView):
