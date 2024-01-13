@@ -61,7 +61,8 @@ def service():
 @app.route('/booking.html')
 def booking_view():
     phong_trong = dao.get_phong_trong()
-    return render_template('booking.html', phong_trong=phong_trong)
+    so_nguoi = dao.get_nguoi_toi_da()
+    return render_template('booking.html', phong_trong=phong_trong, so_nguoi=so_nguoi)
 
 
 @app.route('/room.html', methods=['GET'])
@@ -97,7 +98,11 @@ def stats_sale():
     to_date = request.args.get('to_date')
     return dao.stats_sale(from_date, to_date)
 
-
+@app.route('/api/baocaomatdo', methods=['GET'])
+def stats_mat_do():
+    from_date = request.args.get('from_date')
+    to_date = request.args.get('to_date')
+    return dao.stats_mat_do(from_date, to_date)
 @login.user_loader
 def get_user_by_id(user_id):
     return dao.get_user_by_id(user_id)
@@ -128,5 +133,5 @@ if __name__ == '__main__':
     with app.app_context():
         khoi_tao_quy_dinh()
 
-    # app.run(debug=True)
-    app.run()
+    app.run(debug=True)
+    # app.run()

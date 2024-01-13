@@ -238,12 +238,18 @@
         event.preventDefault()
 
         let tkhSection = $('.them-khach-hang-section')
+        let phong = tkhSection.find('select#khach-hang-phong').val()
+        let so_nguoi_toi_da = {{ so_nguoi | safe }}
+
+        let count_so_khach_loai_phong_nay = 0
+        $.each($('table.khach-hang tbody').children(), (i, e) => {
+        })
+
         let ho = tkhSection.find('input#ho').val()
         let ten = tkhSection.find('input#ten').val()
         let loaiKhach = tkhSection.find('select#loai-khach').val()
         let cmnd = tkhSection.find('input#cmnd').val()
         let diaChi = tkhSection.find('input#dia-chi').val()
-        let phong = tkhSection.find('select#khach-hang-phong').val()
 
         $('table.khach-hang tbody').append(`
         <tr>

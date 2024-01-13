@@ -68,6 +68,7 @@ class ChiTietDatPhong(db.Model):
     don_gia = Column(Integer, nullable=False)
     phong = relationship('Phong')
     phieu_dat_phong = relationship('PhieuDatPhong', back_populates='cac_chi_tiet_dat_phong')
+    cac_khach_hang = relationship('KhachHang')
 
 
 class Phong(db.Model):
@@ -89,7 +90,7 @@ class PhieuDatPhong(db.Model):
 class PhieuThuePhong(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     id_phieu_dat_phong = Column(Integer, ForeignKey('phieu_dat_phong.id'), unique=True)
-    phieu_thue_phong = relationship('PhieuDatPhong')
+    phieu_dat_phong = relationship('PhieuDatPhong')
 
 
 class QuyDinh(db.Model):
@@ -118,31 +119,31 @@ if __name__ == '__main__':
         phieu_dat_phong1 = PhieuDatPhong(
             ten_nguoi_dat=f"NguoiDat{1}",
             ngay_dat_phong=datetime.now(),
-            ngay_tra_phong=datetime(year=2024, month=1, day=10)
+            ngay_tra_phong=datetime(year=2024, month=1, day=16)
         )
         db.session.add(phieu_dat_phong1)
         phieu_dat_phong2 = PhieuDatPhong(
             ten_nguoi_dat=f"NguoiDat{2}",
             ngay_dat_phong=datetime.now(),
-            ngay_tra_phong=datetime(year=2024, month=1, day=12)
+            ngay_tra_phong=datetime(year=2024, month=1, day=18)
         )
         db.session.add(phieu_dat_phong2)
         phieu_dat_phong3 = PhieuDatPhong(
             ten_nguoi_dat=f"NguoiDat{3}",
             ngay_dat_phong=datetime.now(),
-            ngay_tra_phong=datetime(year=2024, month=1, day=15)
+            ngay_tra_phong=datetime(year=2024, month=1, day=20)
         )
         db.session.add(phieu_dat_phong3)
         phieu_dat_phong4 = PhieuDatPhong(
             ten_nguoi_dat=f"NguoiDat{4}",
             ngay_dat_phong=datetime.now(),
-            ngay_tra_phong=datetime(year=2024, month=1, day=20)
+            ngay_tra_phong=datetime(year=2024, month=1, day=25)
         )
         db.session.add(phieu_dat_phong4)
         phieu_dat_phong5 = PhieuDatPhong(
             ten_nguoi_dat=f"NguoiDat{5}",
             ngay_dat_phong=datetime.now(),
-            ngay_tra_phong=datetime(year=2024, month=1, day=18)
+            ngay_tra_phong=datetime(year=2024, month=1, day=30)
         )
         db.session.add(phieu_dat_phong5)
         db.session.commit()

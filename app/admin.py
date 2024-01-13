@@ -34,7 +34,6 @@ class BaoCaoThangView(AdminBaseView):
 
 
 class BaoCaoMatDoView(AdminBaseView):
-
     @expose('/')
     def bill(self):
         return self.render('/admin/BaoCaoMatDo.html')
@@ -71,4 +70,5 @@ class QuyDinhView(AdminModelView):
 Admin.add_view(BaoCaoThangView(name="Báo cáo tháng"))
 Admin.add_view(BaoCaoMatDoView(name="Báo cáo mật độ"))
 Admin.add_view(QuyDinhView(QuyDinh, db.session, name="Quản lý quy định"))
+
 Admin.add_view(LogoutView(name="Đăng xuất"))

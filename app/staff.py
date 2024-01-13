@@ -76,9 +76,14 @@ class HoaDonThanhToanView(StaffBaseView):
         super(HoaDonThanhToanView, self).__init__(name=name)
 
     @expose('/')
-    def bill(self):
+    def list(self):
         data = self.session.query(PhieuThuePhong).all()
         return self.render('/admin/list_bill.html', data=data)
+
+    @expose('/hoa-don/<id>')
+    def bill(self, id):
+        data = dao.xuat_hoa_don(id_phieu_thue_phong=id)
+        return self.render('/admin/bill_details.html', data=data)
 
 
 Admin.add_view(PhieuDatPhongView(PhieuDatPhong, db.session, name="Phiếu Đặt Phòng"))

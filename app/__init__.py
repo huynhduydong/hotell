@@ -9,7 +9,7 @@ from flask_admin import Admin, expose, AdminIndexView
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:%s@localhost/hoteldb?charset=utf8mb4" \
-                                        % quote("root")
+                                        % quote("Admin@123")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 app.config["PAGE_SIZE"] = 4
 app.config["PRICE_SQR_COEF"] = 50
