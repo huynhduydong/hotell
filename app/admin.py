@@ -1,94 +1,74 @@
-# from flask_admin.contrib.geoa import ModelView
 from flask import redirect
-from flask_admin import BaseView, expose, AdminIndexView
+from flask_admin import BaseView, expose
 from flask_admin.contrib.sqla import ModelView
-from flask_login import logout_user, login_required, current_user
+from flask_login import logout_user, current_user
 
-from __init__ import admin, db
-from models import Phong, KhachHang, UserRole#, PhieuDatPhong, PhieuThuePhong
+from app import Admin, db
+from models import UserRole, QuyDinh, QuyDinhEnum
 
 
-class StaffModelView(ModelView):
+class AdminModelView(ModelView):
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.user_role == UserRole.le_tan
+        return current_user.is_authenticated and current_user.user_role == UserRole.QUAN_LY
 
 
-class PhieuDatPhongView(StaffModelView):
-    edit_modal = True
-    details_modal = True
-
-    column_labels = dict(tenNguoiDat='Tên người đặt', ngayDatPhong='Ngày đặt phòng', ngayTraPhong='Ngày trả phòng',
-                         cacPhong='Các phòng')
-    form_columns = ('tenNguoiDat', 'ngayDatPhong', 'ngayTraPhong', 'cacPhong')
-
-
-class PhieuThuePhongView(StaffModelView):
-    edit_modal = True
-    details_modal = True
+class AdminBaseView(BaseView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.user_role == UserRole.QUAN_LY
 
 
 class LogoutView(BaseView):
+    def is_accessible(self):
+        return current_user.is_authenticated
+
     @expose('/')
     def logout(self):
         logout_user()
         return redirect('/admin/login')
 
 
-def is_accessible(self):
-    return current_user.is_authenticated
-
-
-class HoaDonThanhToanView(BaseView):
-    def __init__(self, name, session):
-        self.name = name
-        self.session = session
-        super(HoaDonThanhToanView, self).__init__(name=name)
-
+class BaoCaoThangView(AdminBaseView):
     @expose('/')
     def bill(self):
-        # data = self.session.query(PhieuThuePhong).all()
-        return self.render('/admin/list_bill.html')
-
-
-class BaoCaoThangView(BaseView):
-    def __init__(self, name, session):
-        self.name = name
-        self.session = session
-        super(BaoCaoThangView, self).__init__(name=name)
-
-    @expose('/')
-    def bill(self):
-        # data = self.session.query(PhieuThuePhong).all()
         return self.render('/admin/BaoCaoThang.html')
 
 
-class BaoCaoMatDoView(BaseView):
-    def __init__(self, name, session):
-        self.name = name
-        self.session = session
-        super(BaoCaoMatDoView, self).__init__(name=name)
+class BaoCaoMatDoView(AdminBaseView):
 
     @expose('/')
     def bill(self):
-       # data = self.session.query(PhieuThuePhong).all()
         return self.render('/admin/BaoCaoMatDo.html')
 
 
-class PhongView(StaffModelView):
+class QuyDinhView(AdminModelView):
+    column_display_pk = True
     edit_modal = True
-    details_modal = True
+    can_create = False
+    can_delete = False
+
+    column_list = ['key', 'value']
+    column_labels = {
+        'Key': 'Quy định',
+        'value': 'Giá trị',
+    }
+
+    def get_pk_value(self, model):
+        return model.key.name
+
+    def on_model_change(self, form, model, is_created):
+        if model.key == QuyDinhEnum.SO_KHACH_TOI_DA_TRONG_PHONG:
+            phu_thu = db.session.query(QuyDinh).filter(QuyDinh.key == QuyDinhEnum.SO_LUONG_KHACH_PHU_THU).first()
+            if not model.value >= phu_thu.value:
+                raise Exception(
+                    f'So luong khach toi da phai lon hon hoac bang so luong khach phu thu (>= {phu_thu.value})')
+        if model.key == QuyDinhEnum.SO_LUONG_KHACH_PHU_THU:
+            toi_da = db.session.query(QuyDinh).filter(QuyDinh.key == QuyDinhEnum.SO_KHACH_TOI_DA_TRONG_PHONG).first()
+            if not model.value <= toi_da.value:
+                raise Exception(
+                    f'So luong khach phu thu phai nho hon hoac bang so luong khach toi da (<= {toi_da.value})')
 
 
-class KhachHangView(StaffModelView):
-    edit_modal = True
-    details_modal = True
-
-
-# admin.add_view(PhieuDatPhongView(PhieuDatPhong, db.session, name="Phiếu Đặt Phòng"))
-# admin.add_view(PhieuThuePhongView(PhieuThuePhong, db.session, name="Phiếu Thuê Phòng"))
-admin.add_view(PhongView(Phong, db.session, name="Danh sách phòng"))
-admin.add_view(KhachHangView(KhachHang, db.session, name="Danh sách khách hàng"))
-admin.add_view(LogoutView(name="Đăng xuất"))
-admin.add_view(HoaDonThanhToanView(name="Hóa đơn", session=db.session))
-admin.add_view(BaoCaoThangView(name="Báo cáo tháng", session=db.session))
-admin.add_view(BaoCaoMatDoView(name="Báo cáo mật độ", session=db.session))
+Admin.add_view(BaoCaoThangView(name="Báo cáo tháng"))
+Admin.add_view(BaoCaoMatDoView(name="Báo cáo mật độ"))
+Admin.add_view(QuyDinhView(QuyDinh, db.session, name="Quản lý quy định"))
+Admin.add_view(LogoutView(name="Đăng xuất"))

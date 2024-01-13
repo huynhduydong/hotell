@@ -9,7 +9,7 @@ from flask_admin import Admin, expose, AdminIndexView
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:%s@localhost/hoteldb?charset=utf8mb4" \
-                                        % quote("Admin@123")
+                                        % quote("root")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 app.config["PAGE_SIZE"] = 4
 app.config["PRICE_SQR_COEF"] = 50
@@ -29,4 +29,4 @@ class DashboardView(AdminIndexView):
             return self.render('admin/index.html')
         return redirect('/admin/login')
 
-admin = Admin(app=app, name='QUẢN TRỊ KHÁCH SẠN',template_mode='bootstrap4', index_view=DashboardView())
+Admin = Admin(app=app, name='QUẢN TRỊ KHÁCH SẠN',template_mode='bootstrap4', index_view=DashboardView())

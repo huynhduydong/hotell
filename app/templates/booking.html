@@ -27,13 +27,13 @@
                 <div class="row g-3">
                     <div class="col-md-2">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="name" placeholder="Your Name">
+                            <input type="text" class="form-control" id="last_name" placeholder="Your Name">
                             <label for="name">Họ</label>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="name3" placeholder="Your Name">
+                            <input type="text" class="form-control" id="first_name" placeholder="Your Name">
                             <label for="name">Tên</label>
                         </div>
                     </div>
@@ -43,15 +43,9 @@
                             <label for="email">Email</label>
                         </div>
                     </div>
-                    <div class="col-md-12">
-                        <select name="cusType" id="">
-                            <option value="noi_dia">Nội địa</option>
-                            <option value="nuoc_ngoai">Nước ngoài</option>
-                        </select>
-                    </div>
                     <div class="col-md-6">
                         <div class="form-floating date" id="date3" data-target-input="nearest">
-                            <input type="text" class="form-control datetimepicker-input" id="checkin"
+                            <input type="date" class="form-control datetimepicker-input" id="checkin"
                                    placeholder="Check In" data-target="#date3" data-toggle="datetimepicker"/>
                             <label for="checkin">Ngày đặt phòng</label>
                         </div>
@@ -59,40 +53,44 @@
 
                     <div class="col-md-6">
                         <div class="form-floating date" id="date4" data-target-input="nearest">
-                            <input type="text" class="form-control datetimepicker-input" id="checkout"
+                            <input type="date" class="form-control datetimepicker-input" id="checkout"
                                    placeholder="Check Out" data-target="#date4" data-toggle="datetimepicker"/>
                             <label for="checkout"> Ngày trả phòng</label>
                         </div>
                     </div>
                     <div class="col-md-12">
                         <p>Chọn phòng</p>
-                        <select class="form-select " id="multiple-select-optgroup-field"
+                        <select class="form-select phong" id="multiple-select-optgroup-field"
                                 data-placeholder="" multiple>
+                            <optgroup label="Phong Thuong">
+                                {% for phong in phong_trong %}
+                                {% if phong.loai_phong.name == 'THUONG' %}
+                                <option class="d-flex justify-content-between" value="{{ phong.id }}">
+                                    <span>{{phong.ma_phong}}</span>
+                                    <span>{{phong.don_gia}}</span>
+                                </option>
+                                {% endif %}
+                                {% endfor %}
+                            </optgroup>
 
-                            <optgroup label="Junior Suite">
-                                <option>Phòng 101</option>
-                                <option>Phòng 102</option>
-                                <option>Phòng 103</option>
-                                <option>Phòng 104</option>
+                            <optgroup label="Phong Vip">
+                                {% for phong in phong_trong %}
+                                {% if phong.loai_phong.name == 'VIP' %}
+                                <option value="{{ phong.id }}">
+                                    {{phong.ma_phong}} - {{phong.don_gia}}
+                                </option>
+                                {% endif %}
+                                {% endfor %}
                             </optgroup>
-                            <optgroup label="Executive Suite">
-                                <option>Phòng 201</option>
-                                <option>Phòng 202</option>
-                                <option>Phòng 203</option>
-                                <option>Phòng 204</option>
-
-                            </optgroup>
-                            <optgroup label="Super Deluxe">
-                                <option>Phòng 301</option>
-                                <option>Phòng 302</option>
-                                <option>Phòng 303</option>
-                                <option>Phòng 304</option>
-                            </optgroup>
-                            <optgroup label="Junior Suite">
-                                <option>Phòng 401</option>
-                                <option>Phòng 402</option>
-                                <option>Phòng 403</option>
-                                <option>Phòng 404</option>
+                            <optgroup label="Phong Sieu Vip">
+                                {% for phong in phong_trong %}
+                                {% if phong.loai_phong.name == 'SIEUVIP' %}
+                                <option class="d-flex justify-content-between" value="{{ phong.id }}">
+                                    <span>{{phong.ma_phong}}</span>
+                                    <span>{{phong.don_gia}}</span>
+                                </option>
+                                {% endif %}
+                                {% endfor %}
                             </optgroup>
                         </select></div>
                     <div class="col-md-12">
@@ -124,66 +122,54 @@
                 <h3>Bước 2</h3>
                 <h4>Thêm khách hàng</h4>
 
-                <div class="row g-3">
+                <div class="row g-3 them-khach-hang-section">
                     <div class="col-md-2">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="name1" placeholder="Your Name">
-                            <label for="name">Họ</label>
+                            <input type="text" class="form-control" id="ho" placeholder="Your Name">
+                            <label for="ho">Họ</label>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="name2" placeholder="Your Name">
-                            <label for="name">Tên</label>
+                            <input type="text" class="form-control" id="ten" placeholder="Your Name">
+                            <label for="ten">Tên</label>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <select name="loai-khach" id="loai-khach" class="col-md-2">
+                        <option value="NOI_DIA">Nội Địa</option>
+                        <option value="NUOC_NGOAI">Nước Ngoài</option>
+                    </select>
+                    <div class="col-md-4">
                         <div class="form-floating">
-                            <input type="email" class="form-control" id="CMND" placeholder="Your Email">
-                            <label for="email">CMND</label>
+                            <input type="text" class="form-control" id="cmnd" placeholder="Your Email">
+                            <label for="cmnd">CMND</label>
                         </div>
                     </div>
                     <div class="col-md-12">
                         <div class="form-floating">
-                            <input type="email" class="form-control" id="Dia chi" placeholder="Your Email">
-                            <label for="email">Địa chỉ</label>
+                            <input type="text" class="form-control" id="dia-chi" placeholder="Your Email">
+                            <label for="dia-chi">Địa chỉ</label>
                         </div>
                     </div>
                     <div class="container">
                         <div class="row">
                             <div class="col text-center">
-                                <button class="btn btn-primary prev-step">Thêm</button>
+                                <button class="btn btn-primary them-khach-hang">Thêm</button>
                             </div>
                         </div>
                     </div>
-                    <table class="table">
+                    <table class="table khach-hang">
                         <thead>
                         <tr>
                             <th scope="col">STT</th>
                             <th scope="col">Họ</th>
                             <th scope="col">Tên</th>
+                            <th scope="col">Loại Khách</th>
                             <th scope="col">CMND</th>
                             <th scope="col">Địa chỉ</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td colspan="2"></td>
-                            <td></td>
-                        </tr>
                         </tbody>
                     </table>
                     <div class="container">
@@ -215,7 +201,7 @@
                         </div>
                         <div class="col">
                             <div class="col text-center">
-                                <button type="submit" class="btn btn-success">Submit</button>
+                                <button type="submit" class="btn btn-success submit">Submit</button>
                             </div>
                         </div>
                     </div>
@@ -229,4 +215,68 @@
 <link href="{{url_for('static', filename='css/select2-bootstrap-5-theme.min.css')}}" rel="stylesheet">
 <link href="{{url_for('static', filename='css/select2.min.css')}}" rel="stylesheet">
 <!-- Booking End -->
+
+<script>
+    $('button.them-khach-hang').on('click', (event) => {
+        event.preventDefault()
+
+        let tkhSection = $('.them-khach-hang-section')
+        let ho = tkhSection.find('input#ho').val()
+        let ten = tkhSection.find('input#ten').val()
+        let loaiKhach = tkhSection.find('select#loai-khach').val()
+        let cmnd = tkhSection.find('input#cmnd').val()
+        let diaChi = tkhSection.find('input#dia-chi').val()
+
+        $('table.khach-hang tbody').append(`
+        <tr>
+            <th scope="row">1</th>
+            <td>${ho}</td>
+            <td>${ten}</td>
+            <td>${loaiKhach}</td>
+            <td>${cmnd}</td>
+            <td>${diaChi}</td>
+        </tr>
+        `)
+    })
+
+    $('button.submit').on('click', (event) => {
+        event.preventDefault()
+        console.log(123)
+        let form = $('form')
+
+        let tenNguoiDat = form.find('input#last_name').val() + ' ' + form.find('input#first_name').val()
+        let ngayDatPhong = form.find('input#checkin').val()
+        let ngayTraPhong = form.find('input#checkout').val()
+        let phong = form.find('select.phong').val()
+        let khachHang = []
+
+        $('table.khach-hang tbody tr').each(function () {
+            let td = $(this).find('td')
+            khachHang.push({
+                'ten_khach_hang': $(td[0]).text() + ' ' + $(td[1]).text(),
+                'loai_khach_hang': $(td[2]).text(),
+                'cmnd': $(td[3]).text(),
+                'dia_chi': $(td[4]).text(),
+            })
+        })
+
+        $.ajax({
+            type: 'POST',
+            url: `/api/booking`,
+            data: JSON.stringify({
+                'ten_nguoi_dat': tenNguoiDat,
+                'ngay_dat_phong': ngayDatPhong,
+                'ngay_tra_phong': ngayTraPhong,
+                'phong': phong,
+                'khach_hang': khachHang,
+            }),
+            contentType: "application/json; charset=utf-8",
+            traditional: true,
+            success: (data) => {
+                // ajaxSuccess(data)
+            }
+        })
+    })
+
+</script>
 {% endblock %}

@@ -1,116 +1,84 @@
-from models import *
-from __init__ import app, db
 import hashlib
-from sqlalchemy import or_, and_
+import math
+
+from sqlalchemy import func, cast
+
+from models import *
+from app import db
 
 
-def get_all_loai_phong():
-    return LoaiPhong.qurey.all()
+def authenticate_user(username, password):
+    return (db.session.query(User)
+            .filter(User.username == username,
+                    User.password == hashlib.md5(password.encode('utf-8')).hexdigest()).first())
 
 
-# def get_all_blogs():
-#     return Blog.query.all()
-#
-#
-# def get_blog(blog_id):
-#     return Blog.query.filter(Blog.id.contains(blog_id))
-#
-#
-# def get_blog_kw(kw):
-#     blogs = Blog.query
-#
-#     if kw:
-#         blogs = blogs.filter(Blog.title.contains(kw))
-#
-#     return blogs.all()
-#
-#
-# def get_last_message_id():
-#     return Message.query.order_by(Message.id.desc()).first()
-#
-#
-# def count_blogs():
-#     return Blog.query.count()
-#
-#
-def get_user(user_id):
-    return User.get.query(user_id)
+def get_user_by_id(user_id):
+    return db.session.query(User).filter(User.id == user_id).first()
+
+def dat_phong(ten_nguoi_dat, ngay_dat_phong, ngay_tra_phong, phong, khach_hang):
+    so_nguoi_trung_binh_tren_1_phong = math.ceil(len(khach_hang) / len(phong))
+    quy_dinh_so_nguoi_toi_da = db.session.query(QuyDinh).filter(QuyDinh.key == QuyDinhEnum.SO_KHACH_TOI_DA_TRONG_PHONG)
+
+    if so_nguoi_trung_binh_tren_1_phong > quy_dinh_so_nguoi_toi_da:
+        raise Exception(f'Dat qua so nguoi toi da ({quy_dinh_so_nguoi_toi_da})')
+
+    phieu_dat_phong = PhieuDatPhong(ten_nguoi_dat=ten_nguoi_dat, ngay_dat_phong=ngay_dat_phong,
+                                    ngay_tra_phong=ngay_tra_phong)
+    db.session.add(phieu_dat_phong)
+
+    for id_phong in phong:
+        p = db.session.query(Phong).filter(Phong.id.__eq__(int(id_phong)), Phong.tinh_trang == TinhTrangPhongEnum.TRONG).first()
+        if p is None:
+            raise Exception('Phong khong hop le')
+
+        chi_tiet_dat_phong = ChiTietDatPhong(id_phong=id_phong, id_phieu_dat_phong=phieu_dat_phong.id,
+                                             don_gia=p.don_gia)
+        db.session.add(chi_tiet_dat_phong)
+        p.tinh_trang = TinhTrangPhongEnum.DA_DAT
+
+    db.session.add(phieu_dat_phong)
+
+    for kh in khach_hang:
+        n_kh = KhachHang(ten_khach_hang=kh['ten_khach_hang'], loai_khach_hang=KhachHangEnum[kh['loai_khach_hang']],
+                         cmnd=kh['cmnd'], dia_chi=kh['dia_chi'], id_phieu_dat_phong=phieu_dat_phong.id)
+        db.session.add(n_kh)
+    db.session.commit()
+
+    return phieu_dat_phong
 
 
-#
-#
-# def get_user_by_name(name):
-#     return User.query.filter(User.username.contains(name)).first()
-#
-#
+def stats_sale(from_date, to_date):
+    stats_data = (db.session.query(Phong.loai_phong,
+                                   cast(func.sum(ChiTietDatPhong.don_gia).label(''), Integer),
+                                   func.count(ChiTietDatPhong.id_phieu_dat_phong))
+                  .join(ChiTietDatPhong)
+                  .join(PhieuDatPhong)
+                  .group_by(Phong.loai_phong)
+                  .filter(PhieuDatPhong.ngay_tra_phong.between(from_date, to_date))
+                  .all())
+
+    return [{'loai_phong': loai_phong.name, 'doanh_thu': doanh_thu, 'luot_thue': luot_thue}
+            for loai_phong, doanh_thu, luot_thue in stats_data]
 
 
-def auth_user(username, password):
-    password = str(hashlib.md5(password.encode("utf-8")).hexdigest())
+def phieu_dat_sang_phieu_thue(id_phieu_dat):
+    pdp = db.session.query(PhieuDatPhong).filter(PhieuDatPhong.id.__eq__(int(id_phieu_dat))).first()
+    if pdp is None:
+        return
 
-    return User.query.filter(User.username.__eq__(username),
-                             User.password.__eq__(password)).first()
+    for ctdt in pdp.cac_chi_tiet_dat_phong:
+        ctdt.phong.tinh_trang = TinhTrangPhongEnum.DANG_O
 
+    ptp = PhieuThuePhong(id_phieu_dat_phong=pdp.id)
+    db.session.add(ptp)
 
-def get_room_type_id(room_type):
-    return LoaiPhong.query.filter(LoaiPhong.loai_phong == room_type).first().id
-
-
-def rooms_by_suite(suite):
-    id = get_room_type_id(suite)
-    rooms = Phong.query.filter(Phong.id_loaiphong == id).all()
-    return [room.id for room in rooms]
+    db.session.commit()
 
 
-def rooms_by_rent_time(suite, checkin, checkout):
-    rooms = rooms_by_suite(suite)
-
-    # avail_rooms = ThoiGianTraThuePhong.query.filter(ThoiGianTraThuePhong.id_phong.in_(rooms),
-    #                                                 or_(and_(ThoiGianTraThuePhong.thoi_gian_thue >= checkin,
-    #                                                          ThoiGianTraThuePhong.thoi_gian_thue >= checkout),
-    #                                                     and_(ThoiGianTraThuePhong.thoi_gian_tra <= checkout,
-    #                                                          ThoiGianTraThuePhong.thoi_gian_tra <= checkin)
-    #                                                     )).all()
-    invalid_rooms = ThoiGianTraThuePhong.query.filter(ThoiGianTraThuePhong.id_phong.in_(rooms),
-                                                    ThoiGianTraThuePhong.thoi_gian_tra >= checkin,
-                                                    ThoiGianTraThuePhong.thoi_gian_thue <= checkout).all()
-
-    invalid_rooms = [room.id_phong for room in invalid_rooms]
-
-    avail_rooms = list(filter(lambda x: x not in invalid_rooms, rooms))
-    return avail_rooms
+def get_phong_trong():
+    return db.session.query(Phong).filter(Phong.tinh_trang == TinhTrangPhongEnum.TRONG).all()
 
 
-def get_id_customer_by_cccd(cccd):
-    return KhachHang.query.filter(KhachHang.cccd.__eq__(cccd)).first().id
-
-
-def get_id_user_by_cccd(cccd):
-    return User.query.filter(User.cccd.__eq__(cccd)).first().id
-
-
-def get_room_types():
-    return [type.loai_phong for type in LoaiPhong.query.all()];
-
-
-def get_receptionist_names():
-    return [rec.ho + " " + rec.ten for rec in LeTan.query.all()]
-
-
-def check_cccd(cccd):
-    avail = User.query.filter(User.cccd == cccd).first()
-    if avail:
-        return True
-    else:
-        return False
-
-
-def get_id_user_by_name(fname, lname):
-    return User.query.filter(User.ho == fname, User.ten == lname).first().id
-
-
-def check_booking_time(id_customer, id_room, start_date, end_date):
-    return ThoiGianTraThuePhong.query.filter(ThoiGianTraThuePhong.id_khachhang == id_customer,
-                                             ThoiGianTraThuePhong.id_phong == id_room,
-                                             ThoiGianTraThuePhong.thoi_gian_thue == start_date,
-                                             ThoiGianTraThuePhong.thoi_gian_tra == end_date).first()
+def tinh_tien_phong(phong, khach_hang):
+    return None
