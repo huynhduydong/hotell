@@ -151,6 +151,8 @@
                             <label for="dia-chi">Địa chỉ</label>
                         </div>
                     </div>
+                    <select name="phong" id="khach-hang-phong" class="col-md-2">
+                    </select>
                     <div class="container">
                         <div class="row">
                             <div class="col text-center">
@@ -167,6 +169,7 @@
                             <th scope="col">Loại Khách</th>
                             <th scope="col">CMND</th>
                             <th scope="col">Địa chỉ</th>
+                            <th scope="col">Phòng</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -181,7 +184,9 @@
                             </div>
                             <div class="col">
                                 <div class="col text-center">
-                                    <button type="button" class="btn btn-primary next-step col-md-3">Tiếp theo</button>
+                                    <button type="button" class="btn btn-primary confirm-step next-step col-md-3">Tiếp
+                                        theo
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -192,6 +197,7 @@
                 <!-- Step 3 form fields here -->
                 <h3>Bước 3</h3>
                 <h4>Xác nhận tất cả thông tin</h4>
+                <span class="total"></span>
                 <div class="container">
                     <div class="row">
                         <div class="col">
@@ -217,6 +223,17 @@
 <!-- Booking End -->
 
 <script>
+    $('select.phong').on('change', function () {
+        $('select#khach-hang-phong').html('')
+
+        $.each($('select.phong').find(":selected"), (i, e) => {
+            let opt = $(e)
+            $('select#khach-hang-phong').append(`
+                <option value="${opt.val()}">${opt.text()}</option>
+            `)
+        })
+    })
+
     $('button.them-khach-hang').on('click', (event) => {
         event.preventDefault()
 
@@ -226,6 +243,7 @@
         let loaiKhach = tkhSection.find('select#loai-khach').val()
         let cmnd = tkhSection.find('input#cmnd').val()
         let diaChi = tkhSection.find('input#dia-chi').val()
+        let phong = tkhSection.find('select#khach-hang-phong').val()
 
         $('table.khach-hang tbody').append(`
         <tr>
@@ -235,45 +253,87 @@
             <td>${loaiKhach}</td>
             <td>${cmnd}</td>
             <td>${diaChi}</td>
+            <td>${phong}</td>
         </tr>
         `)
     })
 
-    $('button.submit').on('click', (event) => {
-        event.preventDefault()
-        console.log(123)
-        let form = $('form')
-
-        let tenNguoiDat = form.find('input#last_name').val() + ' ' + form.find('input#first_name').val()
-        let ngayDatPhong = form.find('input#checkin').val()
-        let ngayTraPhong = form.find('input#checkout').val()
-        let phong = form.find('select.phong').val()
-        let khachHang = []
-
+    function get_cac_chi_tiet_dat_phong() {
+        let cac_chi_tiet_dat_phong = []
         $('table.khach-hang tbody tr').each(function () {
             let td = $(this).find('td')
-            khachHang.push({
+            let id_phong = $(td[5]).text()
+            let phong_da_ton_tai = false
+            let ctdp = {}
+
+            $.each(cac_chi_tiet_dat_phong, (i, e) => {
+                if (e['phong'] === id_phong) {
+                    phong_da_ton_tai = true
+                    ctdp = e
+                }
+            })
+
+            if (!phong_da_ton_tai) {
+                ctdp = {phong: id_phong}
+                ctdp['khach_hang'] = []
+            }
+
+
+            ctdp['khach_hang'].push({
                 'ten_khach_hang': $(td[0]).text() + ' ' + $(td[1]).text(),
                 'loai_khach_hang': $(td[2]).text(),
                 'cmnd': $(td[3]).text(),
                 'dia_chi': $(td[4]).text(),
             })
+            if (!phong_da_ton_tai) cac_chi_tiet_dat_phong.push(ctdp)
         })
+        return cac_chi_tiet_dat_phong
+    }
+
+
+    $('button.submit').on('click', (event) => {
+        event.preventDefault()
+
+        let form = $('form')
+
+        let tenNguoiDat = form.find('input#last_name').val() + ' ' + form.find('input#first_name').val()
+        let ngayDatPhong = form.find('input#checkin').val()
+        let ngayTraPhong = form.find('input#checkout').val()
+        let cac_chi_tiet_dat_phong = get_cac_chi_tiet_dat_phong()
 
         $.ajax({
             type: 'POST',
             url: `/api/booking`,
+            timeout: 1000,
             data: JSON.stringify({
                 'ten_nguoi_dat': tenNguoiDat,
                 'ngay_dat_phong': ngayDatPhong,
                 'ngay_tra_phong': ngayTraPhong,
-                'phong': phong,
-                'khach_hang': khachHang,
+                'cac_chi_tiet_dat_phong': cac_chi_tiet_dat_phong
             }),
             contentType: "application/json; charset=utf-8",
             traditional: true,
             success: (data) => {
                 // ajaxSuccess(data)
+            }
+        })
+    })
+
+    $('button.confirm-step').on('click', (event) => {
+        event.preventDefault()
+
+        let cac_chi_tiet_dat_phong = get_cac_chi_tiet_dat_phong()
+        $.ajax({
+            type: 'POST',
+            url: `/api/tinhtienphong`,
+            timeout: 1000,
+            data: JSON.stringify({
+                'cac_chi_tiet_dat_phong': cac_chi_tiet_dat_phong
+            }),
+            contentType: "application/json; charset=utf-8",
+            traditional: true,
+            success: (data) => {
+                $('span.total').text(data.tong_tien)
             }
         })
     })

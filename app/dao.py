@@ -16,35 +16,39 @@ def authenticate_user(username, password):
 def get_user_by_id(user_id):
     return db.session.query(User).filter(User.id == user_id).first()
 
-def dat_phong(ten_nguoi_dat, ngay_dat_phong, ngay_tra_phong, phong, khach_hang):
-    so_nguoi_trung_binh_tren_1_phong = math.ceil(len(khach_hang) / len(phong))
-    quy_dinh_so_nguoi_toi_da = db.session.query(QuyDinh).filter(QuyDinh.key == QuyDinhEnum.SO_KHACH_TOI_DA_TRONG_PHONG)
 
-    if so_nguoi_trung_binh_tren_1_phong > quy_dinh_so_nguoi_toi_da:
-        raise Exception(f'Dat qua so nguoi toi da ({quy_dinh_so_nguoi_toi_da})')
+def dat_phong(ten_nguoi_dat, ngay_dat_phong, ngay_tra_phong, cac_chi_tiet_dat_phong):
+    # so_nguoi_trung_binh_tren_1_phong = math.ceil(len(khach_hang) / len(phong))
+    # quy_dinh_so_nguoi_toi_da = db.session.query(QuyDinh).filter(QuyDinh.key == QuyDinhEnum.SO_KHACH_TOI_DA_TRONG_PHONG)
+    #
+    # if so_nguoi_trung_binh_tren_1_phong > quy_dinh_so_nguoi_toi_da:
+    #     raise Exception(f'Dat qua so nguoi toi da ({quy_dinh_so_nguoi_toi_da})')
 
     phieu_dat_phong = PhieuDatPhong(ten_nguoi_dat=ten_nguoi_dat, ngay_dat_phong=ngay_dat_phong,
                                     ngay_tra_phong=ngay_tra_phong)
     db.session.add(phieu_dat_phong)
 
-    for id_phong in phong:
-        p = db.session.query(Phong).filter(Phong.id.__eq__(int(id_phong)), Phong.tinh_trang == TinhTrangPhongEnum.TRONG).first()
+    for ctdp in cac_chi_tiet_dat_phong:
+        id_phong = ctdp['phong']
+        p = db.session.query(Phong).filter(Phong.id.__eq__(int(id_phong)),
+                                           Phong.tinh_trang == TinhTrangPhongEnum.TRONG).first()
         if p is None:
             raise Exception('Phong khong hop le')
 
         chi_tiet_dat_phong = ChiTietDatPhong(id_phong=id_phong, id_phieu_dat_phong=phieu_dat_phong.id,
                                              don_gia=p.don_gia)
         db.session.add(chi_tiet_dat_phong)
+        db.session.commit()
+
+        for kh in ctdp['khach_hang']:
+            khach_hang = KhachHang(ten_khach_hang=kh['ten_khach_hang'],
+                                   loai_khach_hang=KhachHangEnum[kh['loai_khach_hang']],
+                                   cmnd=kh['cmnd'], dia_chi=kh['dia_chi'],
+                                   id_chi_tiet_dat_phong=chi_tiet_dat_phong.id)
+            db.session.add(khach_hang)
         p.tinh_trang = TinhTrangPhongEnum.DA_DAT
 
-    db.session.add(phieu_dat_phong)
-
-    for kh in khach_hang:
-        n_kh = KhachHang(ten_khach_hang=kh['ten_khach_hang'], loai_khach_hang=KhachHangEnum[kh['loai_khach_hang']],
-                         cmnd=kh['cmnd'], dia_chi=kh['dia_chi'], id_phieu_dat_phong=phieu_dat_phong.id)
-        db.session.add(n_kh)
     db.session.commit()
-
     return phieu_dat_phong
 
 
@@ -80,5 +84,32 @@ def get_phong_trong():
     return db.session.query(Phong).filter(Phong.tinh_trang == TinhTrangPhongEnum.TRONG).all()
 
 
-def tinh_tien_phong(phong, khach_hang):
-    return None
+def tinh_tien_phong(don_gia_phong, so_nguoi, co_khach_nuoc_ngoai):
+    so_nguoi_phu_thu = db.session.query(QuyDinh).filter(QuyDinh.key == QuyDinhEnum.SO_LUONG_KHACH_PHU_THU).first()
+    tien_phong = don_gia_phong
+
+    if co_khach_nuoc_ngoai:
+        he_so_phu_thu = db.session.query(QuyDinh).filter(QuyDinh.key == QuyDinhEnum.TY_LE_PHU_THU).first()
+        tien_phong *= (he_so_phu_thu.value/100)
+
+    if so_nguoi >= so_nguoi_phu_thu.value:
+        tien_phong *= 1.25
+
+    return tien_phong
+
+
+def tinh_tien_phieu_dat(cac_chi_tiet_dat_phong):
+    tien_phieu_dat = 0
+
+    for ctdp in cac_chi_tiet_dat_phong:
+        id_phong = ctdp['phong']
+        don_gia_phong = int(db.session.query(Phong.don_gia).filter(Phong.id == id_phong).first()[0])
+        so_nguoi = len(ctdp['khach_hang'])
+        co_khach_nuoc_ngoai = False
+        for khach_hang in ctdp['khach_hang']:
+            if KhachHangEnum[khach_hang['loai_khach_hang']] == KhachHangEnum.NUOC_NGOAI:
+                co_khach_nuoc_ngoai = True
+
+        tien_phieu_dat += tinh_tien_phong(don_gia_phong, so_nguoi, co_khach_nuoc_ngoai)
+
+    return tien_phieu_dat

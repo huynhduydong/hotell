@@ -56,12 +56,15 @@ class KhachHang(db.Model):
     loai_khach_hang = Column(Enum(KhachHangEnum), nullable=False)
     cmnd = Column(Integer, nullable=False)
     dia_chi = Column(String(50), nullable=False)
-    id_phieu_dat_phong = Column(Integer, ForeignKey('phieu_dat_phong.id'), nullable=False)
+    id_chi_tiet_dat_phong = Column(Integer, ForeignKey('chi_tiet_dat_phong.id'), nullable=False)
 
 
 class ChiTietDatPhong(db.Model):
-    id_phong = Column(Integer, ForeignKey('phong.id'), primary_key=True)
-    id_phieu_dat_phong = Column(Integer, ForeignKey('phieu_dat_phong.id'), primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+
+    id_phieu_dat_phong = Column(Integer, ForeignKey('phieu_dat_phong.id'))
+    id_phong = Column(Integer, ForeignKey('phong.id'))
+
     don_gia = Column(Integer, nullable=False)
     phong = relationship('Phong')
     phieu_dat_phong = relationship('PhieuDatPhong', back_populates='cac_chi_tiet_dat_phong')
@@ -160,7 +163,7 @@ if __name__ == '__main__':
                 loai_khach_hang=KhachHangEnum.NOI_DIA,
                 cmnd=1000000000 + _,
                 dia_chi=f"DiaChi{_}",
-                id_phieu_dat_phong=_ + 1  # Giả sử mã đặt phòng tăng dần từ 1
+                id_chi_tiet_dat_phong=_ + 1  # Giả sử mã đặt phòng tăng dần từ 1
             )
             db.session.add(khach_hang)
         db.session.commit()

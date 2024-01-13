@@ -80,13 +80,13 @@ def booking():
     ten_nguoi_dat = data.get('ten_nguoi_dat')
     ngay_dat_phong = data.get('ngay_dat_phong')
     ngay_tra_phong = data.get('ngay_tra_phong')
-    phong = data.get('phong')
-    khach_hang = data.get('khach_hang')
+    cac_chi_tiet_dat_phong = data.get('cac_chi_tiet_dat_phong')
 
-    try:
-        dao.dat_phong(ten_nguoi_dat, ngay_dat_phong, ngay_tra_phong, phong, khach_hang)
-    except Exception as e:
-        return str(e), 500
+    # try:
+    #     dao.dat_phong(ten_nguoi_dat, ngay_dat_phong, ngay_tra_phong, cac_chi_tiet_dat_phong)
+    # except Exception as e:
+    #     return str(e), 500
+    dao.dat_phong(ten_nguoi_dat, ngay_dat_phong, ngay_tra_phong, cac_chi_tiet_dat_phong)
 
     return jsonify('')
 
@@ -106,16 +106,15 @@ def get_user_by_id(user_id):
 @app.route('/api/tinhtienphong', methods=['POST'])
 def tinh_tien_phong():
     data = request.json
-    phong = data.get('phong')
-    khach_hang = data.get('khach_hang')
+    cac_chi_tiet_dat_phong = data.get('cac_chi_tiet_dat_phong')
 
-    dao.tinh_tien_phong(phong, khach_hang)
+    return jsonify({'tong_tien': dao.tinh_tien_phieu_dat(cac_chi_tiet_dat_phong)})
 
 def khoi_tao_quy_dinh():
     quy_dinh = [
         (QuyDinhEnum.SO_KHACH_TOI_DA_TRONG_PHONG, 3),
         (QuyDinhEnum.SO_LUONG_KHACH_PHU_THU, 3),
-        (QuyDinhEnum.TY_LE_PHU_THU, 25),
+        (QuyDinhEnum.TY_LE_PHU_THU, 150),
     ]
 
     for key, value in quy_dinh:
