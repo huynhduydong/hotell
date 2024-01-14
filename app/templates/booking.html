@@ -93,19 +93,6 @@
                                     {% endfor %}
                                 </optgroup>
                             </select></div>
-                        <div class="col-md-12">
-                            <p>Chọn dịch vụ</p>
-                            <select class="form-select" id="multiple-select-field" data-placeholder=""
-                                    multiple>
-                                <option>Rooms & Appartment</option>
-                                <option>Food & Restaurant</option>
-                                <option>Spa & Fitness</option>
-                                <option>Sports & Gaming</option>
-                                <option>Event & Party</option>
-                                <option>GYM & Yoga</option>
-                            </select>
-                        </div>
-
                     </div>
 
                     <div class="container">
@@ -152,6 +139,7 @@
                             </div>
                         </div>
                         <select name="phong" id="khach-hang-phong" class="col-md-2">
+                            Chọn phòng
                         </select>
                         <div class="container">
                             <div class="row">
@@ -198,7 +186,8 @@
                     <!-- Step 3 form fields here -->
                     <h3>Bước 3</h3>
                     <h4>Xác nhận tất cả thông tin</h4>
-                    <span class="total"></span>
+                    <h5>Tổng tiền thanh toán:</h5>
+                    <span class="total"> </span>
                     <div class="container">
                         <div class="row">
                             <div class="col">
@@ -234,7 +223,7 @@
             `)
             })
         })
-
+        {#lấy ra danh sách phòng đã chọn, lấy ra data phòng theo từng khách hàng đã chọn#}
         $('button.them-khach-hang').on('click', (event) => {
             event.preventDefault()
 
@@ -249,6 +238,7 @@
                 if (id_phong === phong)
                     count_so_khach_loai_phong_nay++
             })
+            {#Bắt dữ liệu thêm khách hàng, lấy ra phòng đã chọn, lấy ra idPhongf đã chọn, đếm số khách đã chọn phòng này,>= quy định thì return  #}
 
             if (count_so_khach_loai_phong_nay >= so_nguoi_toi_da)
                 return
@@ -286,6 +276,7 @@
                         ctdp = e
                     }
                 })
+                {#Duyệt qua mảng để kiểm tra xem phòng đã tồn tại chưa.#}
 
                 if (!phong_da_ton_tai) {
                     ctdp = {phong: id_phong}
@@ -299,6 +290,7 @@
                     'cmnd': $(td[3]).text(),
                     'dia_chi': $(td[4]).text(),
                 })
+                {#thêm thông tin về khách hàng vào mảng.#}
                 if (!phong_da_ton_tai) cac_chi_tiet_dat_phong.push(ctdp)
             })
             return cac_chi_tiet_dat_phong

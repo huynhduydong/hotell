@@ -14,6 +14,7 @@ class StaffModelView(ModelView):
         return current_user.is_authenticated and current_user.user_role == UserRole.NHAN_VIEN
 
 
+
 class StaffBaseView(BaseView):
     def is_accessible(self):
         return current_user.is_authenticated and current_user.user_role == UserRole.NHAN_VIEN
@@ -43,8 +44,8 @@ class PhieuDatPhongView(StaffModelView):
 
         try:
             dao.phieu_dat_sang_phieu_thue(id)
-        except:
-            flash(gettext(f"Phiếu đặt id: {id} đã là phiếu thuê trước đó"), 'error')
+        except Exception as e:
+            flash(gettext(str(e)), 'error')
         else:
             flash(gettext(f"Đã chuyển phiếu đặt id: {id} thành phiếu thuê"), 'success')
 
@@ -61,6 +62,7 @@ class PhongView(StaffModelView):
     can_view_details = True
     edit_modal = True
     details_modal = True
+
 
 
 class KhachHangView(StaffModelView):

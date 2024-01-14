@@ -71,7 +71,7 @@ def stats_mat_do(from_date, to_date):
     stats_data = (db.session.query(Phong.ma_phong,
                                    func.sum(func.datediff(PhieuDatPhong.ngay_tra_phong,
                                                           PhieuDatPhong.ngay_dat_phong,
-                                                )))
+                                                          )))
                   .select_from(Phong)
                   .join(ChiTietDatPhong)
                   .join(PhieuDatPhong)
@@ -87,21 +87,29 @@ def phieu_dat_sang_phieu_thue(id_phieu_dat):
     pdp = db.session.query(PhieuDatPhong).filter(PhieuDatPhong.id.__eq__(int(id_phieu_dat))).first()
     if pdp is None:
         return
-
+    ngay_dat = pdp.ngay_dat_phong
+    ngaythue = datetime.now()
+    songay = (ngaythue - ngay_dat).days
+    if songay > 28:
+        raise Exception("Quá số ngày để thực hiện thuê phòng ")
     for ctdt in pdp.cac_chi_tiet_dat_phong:
         ctdt.phong.tinh_trang = TinhTrangPhongEnum.DANG_O
 
-    ptp = PhieuThuePhong(id_phieu_dat_phong=pdp.id)
-    db.session.add(ptp)
-
-    db.session.commit()
+        try:
+            ptp = PhieuThuePhong(id_phieu_dat_phong=pdp.id)
+            db.session.add(ptp)
+            db.session.commit()
+        except:
+            raise Exception("Phiếu đặt id: {id} đã là phiếu thuê trước đó")
 
 
 def get_nguoi_toi_da():
-    return db.session.query(QuyDinh).filter(QuyDinh.key==QuyDinhEnum.SO_KHACH_TOI_DA_TRONG_PHONG).first().value
+    return db.session.query(QuyDinh).filter(QuyDinh.key == QuyDinhEnum.SO_KHACH_TOI_DA_TRONG_PHONG).first().value
+
 
 def get_phong_trong():
     return db.session.query(Phong).filter(Phong.tinh_trang == TinhTrangPhongEnum.TRONG).all()
+
 
 def tinh_tien_phong(don_gia_phong, so_nguoi, co_khach_nuoc_ngoai):
     so_nguoi_phu_thu = db.session.query(QuyDinh).filter(QuyDinh.key == QuyDinhEnum.SO_LUONG_KHACH_PHU_THU).first()
@@ -115,6 +123,7 @@ def tinh_tien_phong(don_gia_phong, so_nguoi, co_khach_nuoc_ngoai):
         tien_phong *= 1.25
 
     return tien_phong
+
 
 def tinh_tien_phieu_dat(cac_chi_tiet_dat_phong):
     tien_phieu_dat = 0

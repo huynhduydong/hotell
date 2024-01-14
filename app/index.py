@@ -43,20 +43,9 @@ def testimonial():
     return render_template('testimonial.html')
 
 
-@app.route('/team.html', methods=['GET'])
-def team():
-    return render_template('team.html')
-
-
 @app.route('/contact.html', methods=['GET'])
 def contact():
     return render_template('contact.html')
-
-
-@app.route('/service.html', methods=['GET'])
-def service():
-    return render_template('service.html')
-
 
 @app.route('/booking.html')
 def booking_view():
@@ -68,11 +57,6 @@ def booking_view():
 @app.route('/room.html', methods=['GET'])
 def room():
     return render_template('room.html')
-
-
-@app.route('/account.html', methods=['GET'])
-def account():
-    return render_template('account.html')
 
 
 @app.route('/api/booking', methods=['POST'])

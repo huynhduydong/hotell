@@ -5,14 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2bb463ef-6423-4791-a980-a2dae38dd7ee" name="Changes" comment="new">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/hotell.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/hotell.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/dao.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dao.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/index.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/index.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/staff.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/staff.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/about.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/about.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/templates/booking.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/booking.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/booking_2.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/layout/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/layout/footer.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/layout/header.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/layout/header.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/room.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/room.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/service.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/team.html" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -169,6 +178,7 @@
       <workItem from="1705157716883" duration="10611000" />
       <workItem from="1705190083621" duration="432000" />
       <workItem from="1705190520640" duration="1122000" />
+      <workItem from="1705255392158" duration="12943000" />
     </task>
     <task id="LOCAL-00001" summary="new">
       <option name="closed" value="true" />
@@ -190,7 +200,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/hotell$dao.coverage" NAME="dao Coverage Results" MODIFIED="1705102743022" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
-    <SUITE FILE_PATH="coverage/hotell$index.coverage" NAME="index Coverage Results" MODIFIED="1705191104728" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
-    <SUITE FILE_PATH="coverage/hotell$models.coverage" NAME="models Coverage Results" MODIFIED="1705191099612" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
+    <SUITE FILE_PATH="coverage/hotell$index.coverage" NAME="index Coverage Results" MODIFIED="1705267753662" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
+    <SUITE FILE_PATH="coverage/hotell$models.coverage" NAME="models Coverage Results" MODIFIED="1705260050286" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
   </component>
 </project>
