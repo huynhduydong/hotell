@@ -18,11 +18,12 @@ def get_user_by_id(user_id):
 
 
 def dat_phong(ten_nguoi_dat, ngay_dat_phong, ngay_tra_phong, cac_chi_tiet_dat_phong):
-    # so_nguoi_trung_binh_tren_1_phong = math.ceil(len(khach_hang) / len(phong))
-    # quy_dinh_so_nguoi_toi_da = db.session.query(QuyDinh).filter(QuyDinh.key == QuyDinhEnum.SO_KHACH_TOI_DA_TRONG_PHONG)
-    #
-    # if so_nguoi_trung_binh_tren_1_phong > quy_dinh_so_nguoi_toi_da:
-    #     raise Exception(f'Dat qua so nguoi toi da ({quy_dinh_so_nguoi_toi_da})')
+    quy_dinh_so_nguoi_toi_da = db.session.query(QuyDinh).filter(QuyDinh.key == QuyDinhEnum.SO_KHACH_TOI_DA_TRONG_PHONG)
+
+    for ctdt in cac_chi_tiet_dat_phong:
+        so_nguoi_trong_phong = len(ctdt['khach_hang'])
+        if so_nguoi_trong_phong >= quy_dinh_so_nguoi_toi_da:
+            raise Exception(f'Dat qua so nguoi toi da ({quy_dinh_so_nguoi_toi_da})')
 
     phieu_dat_phong = PhieuDatPhong(ten_nguoi_dat=ten_nguoi_dat, ngay_dat_phong=ngay_dat_phong,
                                     ngay_tra_phong=ngay_tra_phong)
